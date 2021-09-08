@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>画板</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <canvas id="drawing-board"></canvas>
+    <script>
+        let canvas = document.getElementById("drawing-board");
+        let ctx = canvas.getContext("2d");
+        let pageWidth = document.documentElement.clientWidth;
+        let pageHeight = document.documentElement.clientHeight;
+
+        canvas.width = pageWidth;
+        canvas.height = pageHeight;
+
+        let painting = false;
+        let lastPoint = { x: undefined, y: undefined };
+
+        var isTouchDevice = 'ontouchstart' in document.documentElement;
+        function drawLine(a, b, c, d) {
+            ctx.beginPath();
+            ctx.moveTo(a, b);
+            ctx.lineTo(c, d);
+            ctx.stroke();
+        }
+        if (isTouchDevice) {
+            canvas.ontouchmove = (e) => {
+                let x = e.touches[0].clientX
+                let y = e.touches[0].clientY
+                ctx.beginPath();
+                ctx.arc(x, y, 10, 0, 2 * Math.PI);
+                ctx.stroke();
+                ctx.fill();
+            }
+
+        } else {
+            canvas.onmousedown = (e) => {
+                painting = true
+                last = [e.clientX, e.clientY]
+            }
+            canvas.onmousemove = (e) => {
+                if (painting === true) {
+                    drawLine(last[0], last[1], e.clientX, e.clientY)
+                    last = [e.clientX, e.clientY]
+                }
+            }
+
+            canvas.onmouseup = () => {
+                painting = false
+            }
+
+        }
+
+    </script>
+</body>
+
+</html>
